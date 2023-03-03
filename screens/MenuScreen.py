@@ -9,6 +9,7 @@ from AES import AESEncryptor
 from textwrap import dedent
 from TextStorage import TextStorage
 from kivymd.app import MDApp
+import pyperclip
 
 
 db = Connection()
@@ -18,7 +19,6 @@ class MenuScreen(MDScreen):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Clock.schedule_interval(self.populate_website_list, 5)
         
     def populate_website_list(self):
         website_names = db.get_website_names()
@@ -105,7 +105,7 @@ class MenuScreen(MDScreen):
             
             Your password has also been copied to the clipboard.
         """)
-        # copy(actual_password)
+        pyperclip.copy(actual_password)
         self.information_dialog = MDDialog(
             title=f'Login details for \'{self.current_website}\'',
             text=message,

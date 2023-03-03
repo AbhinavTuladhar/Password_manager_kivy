@@ -3,6 +3,7 @@ from kivy.properties import ObjectProperty, BooleanProperty, NumericProperty
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.dialog import MDDialog
 from password_generation import generate_password
+import pyperclip
 
 
 class PasswordGeneratorScreenLayout(MDBoxLayout):
@@ -35,7 +36,7 @@ class PasswordGeneratorScreenLayout(MDBoxLayout):
                 length=self.password_length
             )
             self.password_field.text = password
-            # copy(password)
+            pyperclip.copy(password)
         except IndexError:
             self.error_dialog.open()
             
