@@ -1,0 +1,439 @@
+#:kivy 2.1.0
+
+AppScreenManager:
+    id: screen_manager
+    name: 'screen_manager'
+    master_exists: root.master_exists
+    something_variable: root.something_variable
+    current: 'login_screen' if root.master_exists else 'intro_screen'
+    IntroScreen:
+    LoginScreen:
+    MenuScreen:
+    DataUpdateScreen:
+
+<IntroScreen>:
+    id: intro_screen
+    name: 'intro_screen'
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    adaptive_height: True
+    IntroScreenLayout
+
+<LoginScreen>:
+    name: 'login_screen'
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    adaptive_height: True
+    LoginScreenLayout
+
+<PasswordGeneratorScreen>:
+    name: 'password_generator_screen'
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    adaptive_height: True
+    PasswordGeneratorScreenLayout
+
+<MenuScreen>:
+    id: menu_screen
+    name: 'menu_screen'
+    website_screen_layout: website_screen_layout
+    MDBottomNavigation:
+        selected_color_background: 0, 0, 1, .4
+        MDBottomNavigationItem:
+            name: 'screen 1'
+            text: 'MPassword update'
+            MasterPasswordUpdateLayout:
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'Insert data'
+            DatabaseEntryLayout:
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'View details'
+            WebsiteScreenLayout:
+                id: website_screen_layout
+        MDBottomNavigationItem:
+            name: 'screen 4'
+            text: 'Generate passwords'
+            PasswordGeneratorScreenLayout:
+
+<DataUpdateScreen>:
+    id: data_update_screen
+    name: 'data_update_screen'
+    DataUpdateLayout
+
+<IntroScreenLayout>:
+    password_entered: password_1
+    password_confirmation: password_2
+
+    MDLabel:
+        text: '\'Simple\' Password manager'
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5'
+    MDLabel:
+        text: "It seems you have not set a master password. Please set it up."
+        halign: 'center'
+        valign: 'center'
+        font_stlye: 'H5'
+    MDTextField:
+        id: password_1
+        hint_text: 'Enter the password here.'
+        password: True
+        valign: 'center'
+        size_hint_x: 0.5
+        pos_hint: {'center_x': .5}
+    MDTextField:
+        id: password_2
+        hint_text: 'Enter the password again.'
+        valign: 'center'
+        size_hint_x: 0.5
+        pos_hint: {'center_x': .5}
+        password: True
+    MDRectangleFlatButton:
+        text: "Click here to confirm"
+        valign: 'center'
+        halign: 'center'
+        pos_hint: {'center_x': .5}
+        on_release: 
+            root.register_password()
+            if root.match_status: root.parent.manager.current = 'menu_screen'
+
+<LoginScreenLayout>:
+    pos_hint: {'center_x': 0.5, 'center_y':.5}
+    adaptive_height: True
+    size_hint_x: .75
+    password_entered: master_password
+    halign: 'center'
+    valign: 'center'
+    spacing: '40dp'
+    MDLabel:
+        text: '\'Simple\' Password manager'
+        pos_hint: {'center_y': .5}
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5' 
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: '10dp'
+        pos_hint: {'center_x': 0.5, 'center_y':.5}
+        adaptive_height: True
+        size_hint_x: .75
+        halign: 'center'
+        valign: 'center'
+        MDTextField:
+            id: master_password
+            password: not password_flag.active
+            hint_text: 'Enter the master password.'
+            valign: 'center'
+            mode: 'rectangle'
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            spacing: "0dp"
+            padding: ['0dp', '0dp', '0dp', '0dp']
+            height: password_flag.height
+            pos_hint: {'left': 0}
+            MDCheckbox:
+                id: password_flag
+                size: "12dp", "12dp"
+                active: False
+                size_hint_x: .25
+            MDLabel:
+                id: _info
+                text: 'Show password'
+    MDRaisedButton:
+        text: 'Validate'
+        valign: 'center'
+        size_hint_x: 0.5
+        pos_hint: {'center_x': .5}
+        on_release:
+            root.validate_password()
+            print(root.authentication_status)
+            if root.authentication_status: root.parent.manager.current = 'menu_screen'
+
+<PasswordGeneratorScreenLayout>:
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    size_hint_x: 1.0
+    size_hint_y: 1.0
+    spacing: "30dp"
+    valign: 'center'
+    padding: ["10dp", "10dp", "10dp", "10dp"]
+    uppercase_flag: uppercase_flag.active
+    lowercase_flag: lowercase_flag.active
+    symbol_flag: symbol_flag.active
+    number_flag: number_flag.active
+    password_length: int(slider.value)
+    password_field: password_field
+
+    MDLabel:
+        text: 'Generate passwords here!'
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5' 
+    MDBoxLayout:
+        orientation: 'vertical'
+        pos_hint: {'center_y':0.5}
+        MDLabel:
+            text: 'Password length'
+            halign: 'left'
+            valign: 'center'
+        MDBoxLayout:
+            orientation: 'horizontal'
+            MDSlider:
+                id: slider
+                valign: 'center'
+                min: 5
+                max: 100
+                step: 1
+                hint: True
+                size_hint_x: 0.8
+                radius: "200dp"
+            MDLabel:
+                text: str(slider.value)
+                size_hint_x: 0.1
+                halign: 'center'
+    MDGridLayout:
+        rows: 2
+        cols: 4
+        spacing: "10dp"
+        valign: 'center'
+        halign: 'center'
+        padding: ["10dp", "10dp", "10dp", "10dp"]
+        MDCheckbox:
+            id: uppercase_flag
+            active: True
+            size: "36dp", "48dp"
+        MDLabel:
+            text: 'Uppercase'
+        MDCheckbox:
+            id: lowercase_flag
+            active: True
+            size: "36dp", "48dp"
+        MDLabel:
+            text: 'Lowercase'
+        MDCheckbox:
+            id: symbol_flag
+            active: True
+            size: "36dp", "48dp"
+        MDLabel:
+            text: 'Symbols'
+        MDCheckbox:
+            id: number_flag
+            active: True
+            size: "36dp", "48dp"
+        MDLabel:
+            text: 'Numbers'
+    MDTextField:
+        id: password_field
+    MDRaisedButton:
+        text: 'Generate password'
+        valign: 'center'
+        halign: 'center'
+        pos_hint: {'center_x': .5}
+        on_release: root.generate_password_and_copy_to_clipboard()
+
+<MasterPasswordUpdateLayout>:
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    spacing: "50dp"
+    valign: 'center'
+    padding: ["10dp", "10dp", "10dp", "10dp"]
+    new_password: new
+    new_password_confirmation: new2
+
+    MDTopAppBar:
+        title: 'Testing text'
+        right_action_items: [["dots-vertical", lambda x: app.callback()]]
+
+    MDLabel:
+        text: "Change your master password."
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5'
+    MDTextField:
+        id: new
+        valign: 'center'
+        hint_text: 'Enter your new master password.'
+        password: True
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+    MDTextField:
+        id: new2
+        valign: 'center'
+        hint_text: 'Enter your new master password again.'
+        password: True
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+    MDRaisedButton:
+        valign: 'center'
+        text: 'Update passwords'
+        pos_hint: {'center_x':0.5}
+        on_release: root.update_password()
+
+<DatabaseEntryLayout>:
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    spacing: "20dp"
+    valign: 'center'
+    padding: ["10dp", "10dp", "10dp", "10dp"]
+    name_field: website_name_field
+    website_URL_field: website_URL_field
+    email_field: email_field
+    username_field: username_field
+    password_field: password_field
+
+    MDLabel:
+        text: "Insert information about a website here."
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5'
+    MDTextField:
+        id: website_name_field
+        valign: 'center'
+        hint_text: 'name of the website'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: 'web'
+    MDTextField:
+        id: website_URL_field
+        valign: 'center'
+        hint_text: 'website URL'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: 'web'
+
+    MDTextField:
+        id: email_field
+        valign: 'center'
+        hint_text: 'email'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: "email"
+    MDTextField:
+        id: username_field
+        valign: 'center'
+        hint_text: 'username'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: "account"
+    MDTextField:
+        id: password_field
+        valign: 'center'
+        hint_text: 'password'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        helper_text: "Psst. You can generate a random password using another screen on this app. :-)"
+        helper_text_mode: "on_focus"
+        mode: 'rectangle'
+        icon_left: "lock-outline"
+    MDRaisedButton:
+        valign: 'center'
+        text: 'Insert data'
+        pos_hint: {'center_x':0.5}
+        on_release: 
+            root.insert_information()
+
+<WebsiteScreenLayout>:
+    orientation: 'vertical'
+    pos_hint: {'top': 0.99}
+    size_hint_x: 1.0
+    valign: 'center'
+    results_list: results_list
+
+    MDLabel:
+        text: "Find your login information here!"
+        halign: 'center'
+        valign: 'top'
+        font_style: 'H5'
+        size_hint_y: 0.1
+    MDLabel:
+        text: "Login details of the follwing website are available in the database."
+        halign: 'center'
+        valign: 'center'
+        size_hint_y: 0.05
+    MDScrollView:
+        do_scroll_x: False
+        do_scroll_y: True
+        MDList:
+            id: results_list
+            pos_hint: {'bottom':1}
+            size_hint_y: None
+
+<DataUpdateLayout>:
+    orientation: 'vertical'
+    pos_hint: {'center_y':0.5}
+    spacing: "20dp"
+    valign: 'center'
+    padding: ["10dp", "10dp", "10dp", "10dp"]
+    name_field: website_name_field
+    website_URL_field: website_URL_field
+    email_field: email_field
+    username_field: username_field
+    password_field: password_field
+
+    MDLabel:
+        text: "Update information here."
+        halign: 'center'
+        valign: 'center'
+        font_style: 'H5'
+        size_hint_y: .2
+    MDTextField:
+        id: website_name_field
+        valign: 'center'
+        hint_text: 'name of the website'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+    MDTextField:
+        id: website_URL_field
+        valign: 'center'
+        hint_text: 'website URL'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+    MDTextField:
+        id: email_field
+        valign: 'center'
+        hint_text: 'email'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: "email"
+    MDTextField:
+        id: username_field
+        valign: 'center'
+        hint_text: 'username'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        mode: 'rectangle'
+        icon_left: "account"
+    MDTextField:
+        id: password_field
+        valign: 'center'
+        hint_text: 'password'
+        size_hint_x: 0.5
+        pos_hint: {'center_x':0.5}
+        helper_text: "Psst. You can generate a random password using another screen on this app. :-)"
+        helper_text_mode: "on_focus"
+        mode: 'rectangle'
+        icon_left: "lock-outline"
+    MDRaisedButton:
+        valign: 'center'
+        text: 'Update!'
+        pos_hint: {'center_x':0.5}
+        on_release: 
+            root.parent.manager.current = 'menu_screen'
+            root.update_information()
+    MDRaisedButton:
+        valign: 'center'
+        text: 'Go back!'
+        pos_hint: {'center_x':0.5}
+        on_release: 
+            root._clear_fields()
+            root.parent.manager.current = 'menu_screen'
