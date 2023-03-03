@@ -1,7 +1,6 @@
 from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
-from pyperclip import copy
 from config_pass import MasterPasswordConfig
 from Database import Connection
 from layouts.DatabaseEntryLayout import DatabaseEntryLayout
@@ -14,13 +13,9 @@ from layouts.PasswordGeneratorScreenLayout import PasswordGeneratorScreenLayout
 from layouts.WebsiteScreenLayout import WebsiteScreenLayout
 from screens.MenuScreen import MenuScreen
 from screens.OneUseScreens import *
-from itertools import cycle
 
 master_password_configurer = MasterPasswordConfig()
 db = Connection()
-
-password = 'The Legend of Heroes Trails of Cold Steel IV'
-copy(password)
 
 class AppScreenManager(MDScreenManager):
     pass
@@ -28,13 +23,11 @@ class AppScreenManager(MDScreenManager):
 class PasswordManager(MDApp):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.theme_cycler = cycle(['Dark', 'Light'])
         
     def callback(self):
         self.theme_cls.theme_style = next(self.theme_cycler)
     
     def build(self):
-        # self.theme_cls.theme_style = next(self.theme_cycler)
         self.theme_cls.theme_style = 'Dark'
         self.theme_cls.primary_palette = "Blue"
         self.screen_manager = Builder.load_file('design.kv')
