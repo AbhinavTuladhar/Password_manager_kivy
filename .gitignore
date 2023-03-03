@@ -1,0 +1,7 @@
+*.jpg
+
+variables.env
+password.db
+temp.py
+design.kv
+icon_test.py
